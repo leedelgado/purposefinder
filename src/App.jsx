@@ -39,21 +39,44 @@ export default function App() {
       questions: [
         "What’s something you’ve always felt a pull towards? Dive deep into this.",
         "What subjects or fields naturally attract you? (e.g., Education, Health, Psychology, Gaming etc.)",
-        "What do you do when no one is watching? (e.g., Consume content on entrepreneurship, Self educate, etc.)",
-        "What do you do because it’s part of who you are? (e.g., Workout, Draw, Meditate, etc.)",
-        "What are your hobbies? (e.g., Dance, Visit art museums, Skateboard etc.)",
-        "Are there any themes that feel stronger than others? (Design, growth, or entrepreneurship?)",
+        "What do you do when no one is watching?",
+        "What do you do because it’s part of who you are?",
+        "What are your hobbies?",
+        "Are there any themes that feel stronger than others?",
         "Are you looking to merge these into a career/business, or keep some as side pursuits?",
         "Which excites you more—mastering knowledge for yourself or uplifting others?",
-        "Describe an ideal day where you’re fully in your element. What are you doing? Where are you?",
-        "Which of these pulls have lasted the longest? (Design, fitness, psychology, etc.)",
+        "Describe an ideal day where you’re fully in your element.",
+        "Which of these pulls have lasted the longest?",
         "If you had to choose ONE pull to build a career around, which feels most natural?",
         "Which pulls give you energy, and which drain you?"
       ]
-    }
+    },
+    {
+      title: "Childhood Interests",
+      icon: PenTool,
+      questions: [
+        "What was the first thing you remember being obsessed with as a child?",
+        "What did you want to be when you grew up, and why?",
+        "In what activities did you lose all track of time when you were young?",
+        "Which childhood games did you dominate or enjoy the most?"
+      ]
+    },
+    { title: "Personal Heroes", icon: Sparkles, questions: ["Who are your top 3 heroes?", "What specific qualities do you admire in them?"] },
+    { title: "The Unique Edge", icon: Cpu, questions: ["What comes naturally to you that others find difficult?", "What is your 'weird' skill or interest?"] },
+    { title: "Skills & Mastery", icon: PenTool, questions: ["What have you spent 10,000 hours doing (literally or figuratively)?", "What would you like to master next?"] },
+    { title: "Professional Expertise", icon: ShieldAlert, questions: ["What is your current area of expertise?", "How does it align with your inner voice?"] },
+    { title: "The Flow State", icon: Scan, questions: ["Describe a time you were in 'the zone'. What were you doing?", "How often do you experience this state?"] },
+    { title: "Core Values", icon: ShieldAlert, questions: ["What are the 3 values you will never compromise on?", "How do these values show up in your work?"] },
+    { title: "The Pain Point", icon: Info, questions: ["What is a problem in the world that makes you genuinely angry?", "Why does this specific problem resonate with you?"] },
+    { title: "Problem Solving", icon: Cpu, questions: ["Which problems are you uniquely equipped to solve?", "If money wasn't an issue, what problem would you spend your life solving?"] },
+    { title: "Impact & Service", icon: Sparkles, questions: ["How do you want people to feel after interacting with your work?", "What legacy do you want to leave behind?"] },
+    { title: "Constraints & Reality", icon: Info, questions: ["What are your current practical constraints?", "How can you work within them to pursue your mission?"] },
+    { title: "The Vision", icon: Scan, questions: ["Where do you see yourself in 10 years if you follow this path?", "What is one bold step you can take today?"] },
+    { title: "Synthesis", icon: Cpu, questions: ["Look back at your answers. What is the common thread?", "Summarize your mission in one sentence."] },
+    { title: "Final Commitment", icon: ShieldAlert, questions: ["Are you ready to commit to this path?", "What is your first milestone?"] }
   ];
 
-  const currentChapter = chapters[0];
+  const currentChapter = chapters[currentChapterIndex];
 
   const handleNextQuestion = () => {
     if (!currentAnswer.trim()) return;
@@ -241,7 +264,20 @@ export default function App() {
                     <button onClick={() => setIsNoteVisible(false)} className="secondary-button flex-1 order-2 md:order-1">
                       Continue Reflecting
                     </button>
-                    <button onClick={() => alert("Proceeding...")} className="luminous-button flex-[2] order-1 md:order-2 flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (currentChapterIndex < chapters.length - 1) {
+                          const nextChapter = currentChapterIndex + 1;
+                          setCurrentChapterIndex(nextChapter);
+                          setCurrentQuestionIndex(0);
+                          setIsNoteVisible(false);
+                          setCurrentAnswer(answers[`ch${nextChapter}_q0`] || '');
+                        } else {
+                          alert("Congratulations! You have completed the discovery journey.");
+                        }
+                      }}
+                      className="luminous-button flex-[2] order-1 md:order-2 flex items-center justify-center gap-2"
+                    >
                       Correct, Proceed <ArrowRight className="w-5 h-5" />
                     </button>
                   </div>
@@ -258,8 +294,8 @@ export default function App() {
               <AccessibleCard>
                 <div className="flex items-center justify-between mb-10">
                   <div className="flex items-center gap-4">
-                    <Scan className="w-8 h-8 text-secondary" />
-                    <h2 className="text-2xl font-bold text-primary dark:text-white">Chapter 1</h2>
+                    <currentChapter.icon className="w-8 h-8 text-secondary" />
+                    <h2 className="text-2xl font-bold text-primary dark:text-white">Chapter {currentChapterIndex + 1}: {currentChapter.title}</h2>
                   </div>
                   <div className="px-3 py-1 bg-secondary/10 rounded-full text-xs font-bold text-secondary tracking-widest">
                     {currentQuestionIndex + 1} / {currentChapter.questions.length}
