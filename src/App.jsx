@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, Scan, ShieldAlert, Cpu, PenTool, Mic, Info } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, Scan, ShieldAlert, Cpu, PenTool, Mic, Info } from 'lucide-react';
 
 // Adaptive Design System Wrapper
 const ThemeWrapper = ({ children }) => (
@@ -58,16 +58,26 @@ export default function App() {
   const handleNextQuestion = () => {
     if (!currentAnswer.trim()) return;
 
-    setAnswers(prev => ({
-      ...prev,
+    const updatedAnswers = {
+      ...answers,
       [`ch${currentChapterIndex}_q${currentQuestionIndex}`]: currentAnswer
-    }));
-    setCurrentAnswer('');
+    };
+    setAnswers(updatedAnswers);
 
     if (currentQuestionIndex < currentChapter.questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      setCurrentAnswer(updatedAnswers[`ch${currentChapterIndex}_q${nextIndex}`] || '');
     } else {
       setIsNoteVisible(true);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      const prevIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(prevIndex);
+      setCurrentAnswer(answers[`ch${currentChapterIndex}_q${prevIndex}`] || '');
     }
   };
 
@@ -283,13 +293,24 @@ export default function App() {
                     <div className="text-sm text-text-dim font-medium italic">
                       Step into your honest self.
                     </div>
-                    <button
-                      onClick={handleNextQuestion}
-                      disabled={!currentAnswer.trim()}
-                      className={`luminous-button flex items-center gap-2 ${!currentAnswer.trim() ? 'opacity-30 grayscale cursor-not-allowed' : ''}`}
-                    >
-                      {currentQuestionIndex < currentChapter.questions.length - 1 ? 'Next Step' : 'Identify Patterns'} <ArrowRight className="w-5 h-5" />
-                    </button>
+                    <div className="flex gap-4">
+                      {currentQuestionIndex > 0 && (
+                        <button
+                          onClick={handlePreviousQuestion}
+                          className="secondary-button flex items-center gap-2"
+                          aria-label="Previous question"
+                        >
+                          <ArrowLeft className="w-5 h-5" /> Back
+                        </button>
+                      )}
+                      <button
+                        onClick={handleNextQuestion}
+                        disabled={!currentAnswer.trim()}
+                        className={`luminous-button flex items-center gap-2 ${!currentAnswer.trim() ? 'opacity-30 grayscale cursor-not-allowed' : ''}`}
+                      >
+                        {currentQuestionIndex < currentChapter.questions.length - 1 ? 'Next Step' : 'Identify Patterns'} <ArrowRight className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </AccessibleCard>
